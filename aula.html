@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>Modo Aula — Túnel de Vento Didático</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">Laboratório guiado</div>
+      <h1>Modo Aula</h1>
+      <p>Do dado coletado ao número de Reynolds, um passo de cada vez.</p>
+    </div>
+    <div id="lessonStatus" class="status">● Aguardando dados do túnel</div>
+  </header>
+
+  <nav class="nav noPrint">
+    <a href="index.html">Painel ao vivo</a>
+    <a class="active" href="aula.html">Modo Aula</a>
+    <a href="manual.html">Manual</a>
+    <a href="creditos.html">Créditos</a>
+  </nav>
+
+  <div class="lessonShell">
+    <aside class="card lessonSide noPrint">
+      <div class="eyebrow">Seu progresso</div>
+      <h2>Roteiro do ensaio</h2>
+      <div class="progressTrack"><div id="progressFill" class="progressFill"></div></div>
+      <div class="stepList">
+        <div class="stepItem active" data-side-step="0"><div class="bubble">1</div><div>Objetivo</div></div>
+        <div class="stepItem" data-side-step="1"><div class="bubble">2</div><div>Coletar RPM</div></div>
+        <div class="stepItem" data-side-step="2"><div class="bubble">3</div><div>Calcular vazão</div></div>
+        <div class="stepItem" data-side-step="3"><div class="bubble">4</div><div>Calcular velocidade</div></div>
+        <div class="stepItem" data-side-step="4"><div class="bubble">5</div><div>Calcular Reynolds</div></div>
+        <div class="stepItem" data-side-step="5"><div class="bubble">6</div><div>Interpretar</div></div>
+      </div>
+      <hr class="sep">
+      <div class="muted small">
+        <b>Princípio da atividade:</b> o site orienta o raciocínio, mas não entrega o resultado antes de você calcular.
+      </div>
+    </aside>
+
+    <section class="stack">
+      <div class="card noPrint">
+        <div class="sectionTitle">
+          <div>
+            <div class="eyebrow">Dados do equipamento em tempo real</div>
+            <h2>Ensaio atual</h2>
+          </div>
+          <span id="liveBadge" class="tag">Túnel offline</span>
+        </div>
+        <div class="liveStrip">
+          <div class="liveItem"><small>Potência do fan</small><strong id="livePwm">—</strong></div>
+          <div class="liveItem"><small>RPM medido</small><strong id="liveRpm">—</strong></div>
+          <div class="liveItem"><small>Fonte do dado</small><strong id="liveSource">Manual</strong></div>
+        </div>
+        <div class="callout">
+          Durante o Modo Aula, mostramos o <b>RPM</b> porque ele é o dado coletado diretamente. Vazão, velocidade e Reynolds ficam para o aluno calcular nas etapas seguintes.
+        </div>
+      </div>
+
+      <article class="card lessonStep active" data-step="0">
+        <div class="lessonHeader">
+          <div>
+            <div class="eyebrow">Etapa 1 de 6</div>
+            <h2>Entenda o objetivo antes de calcular</h2>
+          </div>
+          <span class="tag">Comece por aqui</span>
+        </div>
+        <p class="muted">Nesta atividade você vai transformar um dado experimental em uma sequência de grandezas aerodinâmicas. O objetivo não é decorar fórmulas: é entender de onde cada número vem.</p>
+
+        <div class="flow">
+          <span class="node">RPM</span><span class="arrow">→</span>
+          <span class="node">Q</span><span class="arrow">→</span>
+          <span class="node">V</span><span class="arrow">→</span>
+          <span class="node">Re</span>
+        </div>
+
+        <div class="threeCol">
+          <div class="definition">
+            <div class="symbol">RPM</div><div class="name">Dado medido</div>
+            <div class="muted small">Vem do tacômetro do fan e é lido pelo Arduino.</div>
+          </div>
+          <div class="definition">
+            <div class="symbol">Q e V</div><div class="name">Dados estimados</div>
+            <div class="muted small">São obtidos pelo modelo adotado para o túnel.</div>
+          </div>
+          <div class="definition">
+            <div class="symbol">Re</div><div class="name">Resultado calculado</div>
+            <div class="muted small">Usa velocidade, propriedades do ar e corda da asa.</div>
+          </div>
+        </div>
+
+        <hr class="sep">
+        <label for="groupName"><b>Nome do aluno ou grupo</b> <span class="muted small">(opcional)</span></label>
+        <input id="groupName" type="text" placeholder="Ex.: Grupo 2">
+
+        <div class="lessonNav">
+          <span></span>
+          <button class="primary" data-next="1">Começar coleta →</button>
+        </div>
+      </article>
+
+      <article class="card lessonStep" data-step="1">
+        <div class="lessonHeader">
+          <div>
+            <div class="eyebrow">Etapa 2 de 6</div>
+            <h2>1. Colete o RPM do ensaio</h2>
+          </div>
+          <span class="tag">Dado experimental</span>
+        </div>
+        <p class="muted"><b>RPM</b> significa rotações por minuto. Neste projeto é a grandeza que o Arduino mede diretamente a partir do sinal TACH do fan.</p>
+
+        <div class="answerBox">
+          <label for="rpmStudent"><b>RPM que será usado no cálculo</b></label>
+          <div class="row" style="margin-top:8px">
+            <input id="rpmStudent" type="number" min="1" step="1" placeholder="Ex.: 1500" style="flex:1">
+            <button id="useLiveRpm">Usar RPM atual</button>
+          </div>
+          <div id="rpmFeedback" class="feedback"></div>
+        </div>
+
+        <div class="callout">
+          <b>Observe:</b> nesta etapa você ainda não está calculando vazão nem velocidade. Primeiro registramos corretamente o dado que veio do experimento.
+        </div>
+
+        <div class="lessonNav">
+          <button data-prev="0">← Voltar</button>
+          <button id="rpmNext" class="primary" disabled data-next="2">Confirmar RPM →</button>
+        </div>
+      </article>
+
+      <article class="card lessonStep" data-step="2">
+        <div class="lessonHeader">
+          <div>
+            <div class="eyebrow">Etapa 3 de 6</div>
+            <h2>2. Transforme RPM em vazão</h2>
+          </div>
+          <span class="tag">Q • m³/s</span>
+        </div>
+
+        <p class="muted">A vazão <b>Q</b> representa o volume de ar que atravessa o sistema por unidade de tempo. Para este projeto usamos uma estimativa proporcional ao RPM do fan.</p>
+
+        <div class="formula">Q = Qref × (RPM / RPMref)</div>
+
+        <div class="twoCol">
+          <div class="definition"><div class="symbol">Qref</div><div class="name">Vazão de referência</div><div class="muted">50 CFM ≈ <b>0,023597 m³/s</b></div></div>
+          <div class="definition"><div class="symbol">RPMref</div><div class="name">Rotação de referência</div><div class="muted"><b>2050 RPM</b></div></div>
+        </div>
+
+        <div class="answerBox">
+          <div class="muted small">Seu RPM coletado:</div>
+          <h3><span id="qRpmEcho">—</span> RPM</h3>
+          <label for="qStudent"><b>Calcule Q em m³/s</b></label>
+          <input id="qStudent" type="text" inputmode="decimal" placeholder="Ex.: 0,0173">
+          <div class="row" style="margin-top:10px">
+            <button id="checkQ" class="primary">Conferir cálculo</button>
+          </div>
+          <div id="qFeedback" class="feedback"></div>
+        </div>
+
+        <details>
+          <summary><b>Precisa de uma dica?</b></summary>
+          <p class="muted">Use a vazão de referência já convertida para SI: <b>0,023597 m³/s</b>. Depois multiplique pela razão entre o seu RPM e 2050 RPM.</p>
+        </details>
+
+        <div class="lessonNav">
+          <button data-prev="1">← Voltar</button>
+          <button id="qNext" class="primary" disabled data-next="3">Próxima etapa →</button>
+        </div>
+      </article>
+
+      <article class="card lessonStep" data-step="3">
+        <div class="lessonHeader">
+          <div>
+            <div class="eyebrow">Etapa 4 de 6</div>
+            <h2>3. Transforme vazão em velocidade</h2>
+          </div>
+          <span class="tag">V • m/s</span>
+        </div>
+
+        <p class="muted">Agora queremos saber a velocidade média do ar na seção de teste. Para isso dividimos a vazão pela área interna do túnel.</p>
+        <div class="formula">V = Q / A</div>
+
+        <div class="twoCol">
+          <div class="definition"><div class="symbol">Q</div><div class="name">Vazão calculada</div><div class="muted"><span id="vQEcho">—</span> m³/s</div></div>
+          <div class="definition"><div class="symbol">A</div><div class="name">Área da seção</div><div class="muted">0,091 × 0,091 = <b>0,008281 m²</b></div></div>
+        </div>
+
+        <div class="answerBox">
+          <label for="vStudent"><b>Calcule V em m/s</b></label>
+          <input id="vStudent" type="text" inputmode="decimal" placeholder="Ex.: 2,08">
+          <div class="row" style="margin-top:10px"><button id="checkV" class="primary">Conferir cálculo</button></div>
+          <div id="vFeedback" class="feedback"></div>
+        </div>
+
+        <details>
+          <summary><b>Precisa de uma dica?</b></summary>
+          <p class="muted">Certifique-se de que Q está em <b>m³/s</b> e A em <b>m²</b>. Assim, o resultado sai em <b>m/s</b>.</p>
+        </details>
+
+        <div class="lessonNav">
+          <button data-prev="2">← Voltar</button>
+          <button id="vNext" class="primary" disabled data-next="4">Próxima etapa →</button>
+        </div>
+      </article>
+
+      <article class="card lessonStep" data-step="4">
+        <div class="lessonHeader">
+          <div>
+            <div class="eyebrow">Etapa 5 de 6</div>
+            <h2>4. Calcule o número de Reynolds</h2>
+          </div>
+          <span class="tag">Re • adimensional</span>
+        </div>
+
+        <p class="muted">O número de Reynolds compara os efeitos de <b>inércia</b> e <b>viscosidade</b> no escoamento. Aqui usamos a corda da asa como comprimento característico.</p>
+        <div class="formula">Re = (ρ × V × c) / μ</div>
+
+        <div class="twoCol">
+          <div class="definition"><div class="symbol">ρ</div><div class="name">Densidade do ar</div><div class="muted"><b>1,204 kg/m³</b></div></div>
+          <div class="definition"><div class="symbol">V</div><div class="name">Velocidade calculada</div><div class="muted"><span id="reVEcho">—</span> m/s</div></div>
+          <div class="definition"><div class="symbol">c</div><div class="name">Corda da asa</div><div class="muted"><b>0,050 m</b> — não use 50 mm diretamente.</div></div>
+          <div class="definition"><div class="symbol">μ</div><div class="name">Viscosidade dinâmica</div><div class="muted"><b>1,81 × 10⁻⁵ Pa·s</b></div></div>
+        </div>
+
+        <div class="answerBox">
+          <label for="reStudent"><b>Calcule Re</b></label>
+          <input id="reStudent" type="text" inputmode="decimal" placeholder="Ex.: 7000">
+          <div class="row" style="margin-top:10px"><button id="checkRe" class="primary">Conferir Reynolds</button></div>
+          <div id="reFeedback" class="feedback"></div>
+        </div>
+
+        <details>
+          <summary><b>Precisa de uma dica?</b></summary>
+          <p class="muted">Substitua os quatro valores na fórmula. Reynolds não possui unidade. Um erro comum é usar a corda como 50 em vez de <b>0,050 m</b>.</p>
+        </details>
+
+        <div class="lessonNav">
+          <button data-prev="3">← Voltar</button>
+          <button id="reNext" class="primary" disabled data-next="5">Interpretar resultado →</button>
+        </div>
+      </article>
+
+      <article class="card lessonStep" data-step="5">
+        <div class="lessonHeader">
+          <div>
+            <div class="eyebrow">Etapa 6 de 6</div>
+            <h2>5. Feche o raciocínio</h2>
+          </div>
+          <span class="tag">Resumo do ensaio</span>
+        </div>
+
+        <div class="callout good">
+          <b>Você percorreu toda a cadeia do experimento:</b> mediu RPM, estimou vazão, calculou velocidade e chegou ao número de Reynolds.
+        </div>
+
+        <div class="summaryGrid" style="margin-top:14px">
+          <div class="summaryItem"><small>Aluno / grupo</small><strong id="sumGroup">—</strong></div>
+          <div class="summaryItem"><small>RPM medido</small><strong id="sumRpm">—</strong></div>
+          <div class="summaryItem"><small>Q estimada</small><strong id="sumQ">—</strong></div>
+          <div class="summaryItem"><small>V estimada</small><strong id="sumV">—</strong></div>
+          <div class="summaryItem"><small>Re calculado</small><strong id="sumRe">—</strong></div>
+          <div class="summaryItem"><small>Data do ensaio</small><strong id="sumDate">—</strong></div>
+        </div>
+
+        <hr class="sep">
+        <h3>O que esse resultado ensina?</h3>
+        <div class="flow">
+          <span class="node">RPM ↑</span><span class="arrow">→</span>
+          <span class="node">Q ↑</span><span class="arrow">→</span>
+          <span class="node">V ↑</span><span class="arrow">→</span>
+          <span class="node">Re ↑</span>
+        </div>
+        <p class="muted">Mantendo a geometria e as propriedades do ar, aumentar a rotação do fan aumenta a velocidade estimada e, consequentemente, o número de Reynolds.</p>
+
+        <label for="observations"><b>Observações do ensaio</b></label>
+        <textarea id="observations" rows="4" placeholder="Ex.: comportamento da fumaça, estabilidade do fluxo, observações visuais..."></textarea>
+
+        <div class="row" style="margin-top:14px">
+          <button class="primary" id="printLesson">Imprimir / salvar em PDF</button>
+          <button id="resetLesson">Novo ensaio</button>
+        </div>
+
+        <div class="lessonNav noPrint">
+          <button data-prev="4">← Revisar cálculo</button>
+          <a class="button" href="index.html">Voltar ao painel</a>
+        </div>
+      </article>
+    </section>
+  </div>
+
+  <footer>Túnel de Vento Didático • Modo Aula • IFSC Câmpus Xanxerê</footer>
+</main>
+<script type="module" src="aula.js"></script>
+</body>
+</html>
