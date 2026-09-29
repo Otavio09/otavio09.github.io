@@ -11,9 +11,9 @@ function draw(){let{q,v,re}=vals();$("rpm").textContent=Math.round(rpm).toLocale
 function ui(){
  const rc=!pc&&online&&remote,can=pc||rc;
  $("connect").disabled=pc||!("serial"in navigator);$("disconnect").disabled=!pc;$("send").disabled=!can;$("pwm").disabled=!can;quick.forEach(b=>b.disabled=!can);
- $("toggleRemote").style.display=pc?"inline-block":"none";$("toggleRemote").disabled=!pc;$("toggleRemote").textContent=remote?"Bloquear controle":"Liberar controle";
+ $("toggleRemote").style.display=pc?"inline-block":"none";$("toggleRemote").disabled=!pc;$("toggleRemote").textContent=remote?"BLOQUEAR NO CELULAR":"LIBERAR NO CELULAR";
  $("remoteGate").classList.toggle("allowed",remote&&online);
- $("remoteState").textContent=pc?(remote?"Liberado — celulares podem alterar somente a velocidade do fan.":"Bloqueado — celulares apenas acompanham os dados."):(online&&remote?"Controle remoto liberado pelo operador — você pode alterar a velocidade do fan.":online?"Modo visualização — controle do fan bloqueado pelo operador.":"Túnel offline — aguardando o computador conectado ao Arduino.");
+ $("remoteState").textContent=pc?(remote?"LIBERADO — o botão mestre está ativo e celulares podem alterar somente a velocidade do fan.":"BLOQUEADO — o botão mestre impede qualquer alteração pelo celular; celulares apenas acompanham os dados."):(online&&remote?"CONTROLE LIBERADO PELO PC — você pode alterar a velocidade do fan.":online?"MODO VISUALIZAÇÃO — o PC bloqueou alterações pelo celular.":"Túnel offline — aguardando o computador conectado ao Arduino.");
  $("status").className=(pc||online)?"status on":"status";$("status").textContent=pc?"● Arduino conectado • transmitindo":online?"● AO VIVO — túnel em operação":"● Túnel offline";
 }
 async function pub(force=false,sync=false){
