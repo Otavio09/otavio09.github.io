@@ -1,31 +1,132 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07111f"><title>Manual do Projeto — Túnel de Vento</title>
-<style>
-:root{--bg:#07111f;--panel:#0d1a2b;--line:#203a56;--text:#f4f7fb;--muted:#9fb3c8;--blue:#4ca6ff}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 15% 0%,rgba(76,166,255,.15),transparent 28%),var(--bg);color:var(--text)}
-main{max-width:980px;margin:auto;padding:24px}h1{margin:0;font-size:clamp(28px,4vw,44px)}p,li{color:var(--muted);line-height:1.6}.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:20px;padding:20px;margin:14px 0}
-.nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.nav a{color:#c9d8e7;text-decoration:none;background:#102238;border:1px solid var(--line);border-radius:11px;padding:9px 13px;font-weight:700}.nav a.active{color:#fff;background:#1d3a5a;border-color:#416f9e}
-.step{display:grid;grid-template-columns:34px 1fr;gap:12px;margin:14px 0}.n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#1e3d5d;color:#a9d7ff;font-weight:800}.formula{background:#06101a;border:1px solid #1d3854;border-radius:12px;padding:12px;font-family:Consolas,monospace;color:#d8ebff;margin:8px 0;white-space:pre-line}.tag{display:inline-block;padding:5px 9px;border-radius:999px;background:#13263d;border:1px solid #274666;color:#bcd5ee;font-size:12px;font-weight:700}.note{border-left:3px solid var(--blue);padding-left:12px}
-</style></head><body><main>
-<h1>Manual do Projeto</h1><p>Este manual será ampliado junto com o desenvolvimento do túnel de vento. A ideia é que um aluno que nunca utilizou o equipamento consiga entender o objetivo, conectar o sistema e realizar os primeiros ensaios.</p>
-<nav class="nav"><a href="index.html">Painel</a><a class="active" href="manual.html">Manual do projeto</a><a href="creditos.html">Créditos</a></nav>
-<section class="card"><span class="tag">1. Visão geral</span><h2>O que é este equipamento?</h2><p>É um túnel de vento didático com um perfil NACA 0012 na seção de testes. O fan gera o escoamento, o Arduino controla sua rotação e mede RPM, e a aplicação estima vazão, velocidade do ar e número de Reynolds.</p><p class="note"><b>Importante:</b> RPM é medido diretamente. Vazão e velocidade são estimadas pelo modelo adotado e podem ser calibradas futuramente com um anemômetro.</p></section>
-<section class="card"><span class="tag">2. Antes de começar</span><h2>Conexão básica</h2>
-<div class="step"><div class="n">1</div><div><b>Ligue a alimentação do fan.</b><p>O fan utiliza alimentação externa de 12 V. Não alimente o fan pelo pino 5 V do Arduino.</p></div></div>
-<div class="step"><div class="n">2</div><div><b>Conecte o Arduino ao computador por USB.</b><p>O computador precisa estar fisicamente conectado ao Arduino para que o navegador consiga controlar o equipamento.</p></div></div>
-<div class="step"><div class="n">3</div><div><b>Feche o Monitor Serial da IDE Arduino.</b><p>Somente um programa pode usar a porta serial por vez.</p></div></div>
-<div class="step"><div class="n">4</div><div><b>Abra o Painel em Chrome ou Edge.</b><p>Clique em “Conectar Arduino” e selecione a porta correspondente ao equipamento.</p></div></div>
-</section>
-<section class="card"><span class="tag">3. Utilização</span><h2>Primeiro ensaio</h2><p>Comece com uma potência moderada do fan. Observe o RPM e espere alguns segundos para estabilização. Depois registre RPM e velocidade estimada. Uma sequência simples é testar 25%, 50%, 75% e 100%, comparar os valores e calcular Reynolds.</p></section>
-<section class="card"><span class="tag">4. Controle pelo celular</span><h2>Como funciona o controle remoto?</h2><p>O computador conectado ao Arduino é sempre o controlador principal. No Painel, o operador pode liberar ou bloquear o controle remoto. Quando liberado, quem estiver acompanhando pelo celular pode alterar somente a velocidade do fan.</p><p>O comando segue este caminho: celular → nuvem → computador → Arduino → fan. O RPM medido retorna pelo caminho inverso e aparece no celular em tempo real.</p><p class="note"><b>Segurança de uso:</b> o controle remoto inicia bloqueado. Ao desconectar o Arduino, ele é bloqueado novamente.</p></section>
-<section class="card"><span class="tag">5. Cálculos</span><h2>Como o sistema chega ao Reynolds?</h2><p>A vazão é estimada a partir da rotação do fan:</p><div class="formula">Q = Qref × (RPM / RPMref)</div><p>A velocidade média é:</p><div class="formula">V = Q / A</div><p>O número de Reynolds é:</p><div class="formula">Re = (ρ × V × c) / μ</div><p>Onde <b>ρ</b> é a densidade do ar, <b>V</b> a velocidade, <b>c</b> a corda da asa e <b>μ</b> a viscosidade dinâmica.</p></section>
-<section class="card"><span class="tag">6. Dados atuais</span><h2>Configuração utilizada</h2><div class="formula">Perfil: NACA 0012
-Seção interna: 91 × 91 mm
-Área A: 0,008281 m²
-Corda c: 0,050 m
-RPMref: 2050 RPM
-Qref: 50 CFM
-ρ: 1,204 kg/m³
-μ: 1,81×10⁻⁵ Pa·s</div></section>
-<section class="card"><span class="tag">Em desenvolvimento</span><h2>Próximas partes do manual</h2><p>Podemos acrescentar fotos da montagem, esquema elétrico, condicionamento de fluxo, procedimento com fumaça, interpretação da separação do escoamento, solução de problemas e um roteiro de aula completo.</p></section>
-</main></body></html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>Manual — Túnel de Vento Didático</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">Documentação do projeto</div>
+      <h1>Manual do Túnel de Vento</h1>
+      <p>Funcionamento, utilização, cálculos e limites do sistema em uma única referência.</p>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="index.html">Painel ao vivo</a>
+    <a href="aula.html">Modo Aula</a>
+    <a class="active" href="manual.html">Manual</a>
+    <a href="creditos.html">Créditos</a>
+  </nav>
+
+  <section class="card">
+    <div class="eyebrow">1. Visão geral</div>
+    <h2>O que este equipamento faz?</h2>
+    <p class="muted">O túnel de vento foi desenvolvido como uma bancada didática para observar o escoamento do ar em torno de um perfil NACA 0012 e relacionar a rotação do fan com vazão, velocidade e número de Reynolds.</p>
+    <div class="flow">
+      <span class="node">Fan</span><span class="arrow">→</span>
+      <span class="node">RPM medido</span><span class="arrow">→</span>
+      <span class="node">Q estimada</span><span class="arrow">→</span>
+      <span class="node">V estimada</span><span class="arrow">→</span>
+      <span class="node">Re calculado</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">2. Antes de utilizar</div>
+    <h2>Sequência de conexão</h2>
+    <div class="stack">
+      <div class="definition"><div class="symbol">1</div><div class="name">Alimente o fan em 12 V</div><div class="muted">O fan utiliza fonte externa de 12 V. Não alimente o fan pelo pino 5 V do Arduino.</div></div>
+      <div class="definition"><div class="symbol">2</div><div class="name">Conecte o Arduino ao computador por USB</div><div class="muted">O computador que controla o equipamento precisa estar fisicamente conectado ao Arduino.</div></div>
+      <div class="definition"><div class="symbol">3</div><div class="name">Feche o Monitor Serial da IDE Arduino</div><div class="muted">A porta serial deve ficar livre para o navegador.</div></div>
+      <div class="definition"><div class="symbol">4</div><div class="name">Abra o Painel em Chrome ou Edge</div><div class="muted">Clique em “Conectar Arduino” e selecione a porta correspondente.</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">3. Controle pelo celular</div>
+    <h2>PC como controlador principal</h2>
+    <p class="muted">O computador conectado ao Arduino é sempre o controlador principal. O celular acompanha os dados pelo mesmo site.</p>
+    <div class="callout">
+      <b>Botão mestre:</b> no PC, o operador pode liberar ou bloquear a alteração da velocidade do fan pelo celular. O controle remoto inicia bloqueado e é bloqueado novamente ao desconectar o Arduino.
+    </div>
+    <p class="muted">Quando liberado, o celular pode alterar apenas a potência do fan. Parâmetros do modelo como área, corda, densidade do ar e viscosidade permanecem fixos.</p>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">4. Dados do projeto</div>
+    <h2>Valores adotados</h2>
+    <div class="twoCol">
+      <div class="definition"><div class="symbol">NACA 0012</div><div class="name">Perfil aerodinâmico</div><div class="muted">Corda: 50 mm • envergadura: 88 mm.</div></div>
+      <div class="definition"><div class="symbol">91 × 91 mm</div><div class="name">Seção de teste</div><div class="muted">Área interna A = 0,008281 m².</div></div>
+      <div class="definition"><div class="symbol">2050 RPM</div><div class="name">RPM de referência</div><div class="muted">Valor observado no conjunto atual.</div></div>
+      <div class="definition"><div class="symbol">50 CFM</div><div class="name">Vazão de referência</div><div class="muted">≈ 0,023597 m³/s.</div></div>
+      <div class="definition"><div class="symbol">ρ = 1,204</div><div class="name">Densidade do ar</div><div class="muted">kg/m³, valor aproximado adotado para o cálculo didático.</div></div>
+      <div class="definition"><div class="symbol">μ = 1,81×10⁻⁵</div><div class="name">Viscosidade dinâmica</div><div class="muted">Pa·s, valor aproximado adotado para o cálculo didático.</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">5. Como os cálculos são feitos</div>
+    <h2>RPM → vazão → velocidade → Reynolds</h2>
+    <p class="muted"><b>Etapa A — vazão estimada:</b></p>
+    <div class="formula">Q = Qref × (RPM / RPMref)</div>
+    <p class="muted"><b>Etapa B — velocidade média estimada:</b></p>
+    <div class="formula">V = Q / A</div>
+    <p class="muted"><b>Etapa C — número de Reynolds:</b></p>
+    <div class="formula">Re = (ρ × V × c) / μ</div>
+    <div class="callout good">
+      No <b>Modo Aula</b>, o aluno percorre exatamente essa sequência e precisa calcular cada etapa antes de avançar.
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">6. O que significa cada grandeza?</div>
+    <h2>Glossário essencial</h2>
+    <div class="infoGrid">
+      <div class="info"><b>RPM</b><div class="muted small">Rotações por minuto do fan. É o valor medido diretamente.</div></div>
+      <div class="info"><b>Q</b><div class="muted small">Vazão volumétrica: volume de ar por unidade de tempo.</div></div>
+      <div class="info"><b>V</b><div class="muted small">Velocidade média estimada do ar na seção de teste.</div></div>
+      <div class="info"><b>A</b><div class="muted small">Área transversal interna da seção do túnel.</div></div>
+      <div class="info"><b>c</b><div class="muted small">Corda da asa: distância do bordo de ataque ao bordo de fuga.</div></div>
+      <div class="info"><b>ρ</b><div class="muted small">Densidade do ar.</div></div>
+      <div class="info"><b>μ</b><div class="muted small">Viscosidade dinâmica do ar.</div></div>
+      <div class="info"><b>Re</b><div class="muted small">Número adimensional que relaciona efeitos de inércia e viscosidade.</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">7. Visualização do escoamento</div>
+    <h2>Camada limite e separação</h2>
+    <p class="muted">A fumaça serve como marcador visual do escoamento. Quando acompanha o contorno da asa, o fluxo está mais aderido à superfície. Quando deixa de seguir o perfil e forma uma região de recirculação, ocorre separação do escoamento.</p>
+    <div class="callout warn">
+      O equipamento é didático. Como o Reynolds é baixo e a seção é pequena, não devemos assumir que o comportamento observado será igual ao de uma asa em escala real.
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">8. Limitações do modelo</div>
+    <h2>O que é medido e o que é estimado?</h2>
+    <p class="muted">O <b>RPM é medido</b> pelo Arduino. A vazão e a velocidade são <b>estimadas</b> a partir da relação proporcional entre RPM e uma vazão de referência.</p>
+    <p class="muted">O valor de 50 CFM foi adotado como referência nominal para fins didáticos; ele não substitui uma curva oficial do fan nem uma calibração experimental do túnel. Para aumentar a precisão, o próximo passo seria calibrar a velocidade com anemômetro ou outro instrumento apropriado.</p>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">9. Para conduzir uma aula</div>
+    <h2>Fluxo recomendado</h2>
+    <p class="muted">Abra o Painel para colocar o túnel em operação. Depois direcione os alunos ao Modo Aula, onde eles coletam o RPM e fazem os cálculos de forma guiada.</p>
+    <div class="row">
+      <a class="button" href="index.html">Abrir Painel</a>
+      <a class="button primary" href="aula.html">Abrir Modo Aula</a>
+    </div>
+  </section>
+
+  <footer>Túnel de Vento Didático • Manual • IFSC Câmpus Xanxerê</footer>
+</main>
+</body>
+</html>
