@@ -81,24 +81,112 @@ c = 0,050 m
 </aside></div>
 <footer>Aplicação didática — Túnel de Vento NACA 0012</footer>
 
-<script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SUPABASE_URL="https://pqsedxfgtauxjclityjt.supabase.co";
+const SUPABASE_KEY="sb_publishable_SN09xuS01Vha1mo3H6rBUQ_EZLR0-0I";
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+
 const RPM_REF=2050,Q_REF_CFM=50,CFM=.00047194745,AREA=.091*.091,CHORD=.050,RHO=1.204,MU=1.81e-5;
-let port=null,reader=null,reading=false,rpm=0,showRe=false;
+let port=null,reader=null,reading=false,rpm=0,showRe=false,isController=false,currentPwm=50;
+let lastCloudWrite=0,heartbeatTimer=null;
 const $=id=>document.getElementById(id),quick=[...document.querySelectorAll("[data-p]")];
 function fmt(n,d){return Number(n).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d})}
 function log(t){let e=$("log");e.textContent+=t+"\n";e.scrollTop=e.scrollHeight}
-function setConnected(v){$("connect").disabled=v;$("disconnect").disabled=!v;$("send").disabled=!v;quick.forEach(b=>b.disabled=!v);$("status").className=v?"status on":"status";$("status").textContent=v?"● Arduino conectado":"● Arduino desconectado"}
-function updatePWM(v){v=Math.max(0,Math.min(100,parseInt(v)||0));$("pwm").value=v;$("pwmBig").textContent=v+"%";$("gauge").style.setProperty("--p",v)}
-function calc(){let q=rpm>0?(Q_REF_CFM*CFM)*(rpm/RPM_REF):0,v=q/AREA,re=RHO*v*CHORD/MU;$("rpm").textContent=Math.round(rpm).toLocaleString("pt-BR");$("flow").textContent=fmt(q,4);$("vel").textContent=fmt(v,2);$("re").textContent=showRe?Math.round(re).toLocaleString("pt-BR"):"????"}
-function parseLine(s){if(!s)return;log("Arduino: "+s);let m=s.match(/RPM\s*:\s*(\d+(?:[.,]\d+)?)/i);if(m){rpm=parseFloat(m[1].replace(",","."));calc()}}
+function setConnected(v){
+  $("connect").disabled=v||!("serial" in navigator);
+  $("disconnect").disabled=!v;
+  $("send").disabled=!v;
+  quick.forEach(b=>b.disabled=!v);
+  if(v){$("status").className="status on";$("status").textContent="● Arduino conectado • transmitindo";}
+}
+function updatePWM(v){v=Math.max(0,Math.min(100,parseInt(v)||0));currentPwm=v;$("pwm").value=v;$("pwmBig").textContent=v+"%";$("gauge").style.setProperty("--p",v)}
+function valuesFromRpm(){
+  const q=rpm>0?(Q_REF_CFM*CFM)*(rpm/RPM_REF):0;
+  const v=q/AREA;
+  const re=RHO*v*CHORD/MU;
+  return {q,v,re};
+}
+function calc(){
+  const {q,v,re}=valuesFromRpm();
+  $("rpm").textContent=Math.round(rpm).toLocaleString("pt-BR");
+  $("flow").textContent=fmt(q,4);
+  $("vel").textContent=fmt(v,2);
+  $("re").textContent=showRe?Math.round(re).toLocaleString("pt-BR"):"????";
+}
+async function publishStatus(force=false){
+  if(!isController)return;
+  const now=Date.now();
+  if(!force && now-lastCloudWrite<700)return;
+  lastCloudWrite=now;
+  const {q,v,re}=valuesFromRpm();
+  const {error}=await supabase.from("tunel_status").update({
+    rpm:Math.round(rpm),pwm:currentPwm,velocidade:v,vazao:q,reynolds:re,online:true,updated_at:new Date().toISOString()
+  }).eq("id",1);
+  if(error)log("Nuvem: "+error.message);
+}
+function applyRemote(row){
+  if(isController||!row)return;
+  rpm=Number(row.rpm||0);
+  updatePWM(Number(row.pwm||0));
+  $("rpm").textContent=Math.round(rpm).toLocaleString("pt-BR");
+  $("flow").textContent=fmt(Number(row.vazao||0),4);
+  $("vel").textContent=fmt(Number(row.velocidade||0),2);
+  $("re").textContent=showRe?Math.round(Number(row.reynolds||0)).toLocaleString("pt-BR"):"????";
+  const fresh=row.updated_at && (Date.now()-new Date(row.updated_at).getTime()<8000) && row.online;
+  $("status").className=fresh?"status on":"status";
+  $("status").textContent=fresh?"● AO VIVO — túnel em operação":"● Túnel offline";
+}
+async function startCloud(){
+  const {data}=await supabase.from("tunel_status").select("*").eq("id",1).single();
+  if(data)applyRemote(data);
+  supabase.channel("tunel-status-live").on("postgres_changes",
+    {event:"UPDATE",schema:"public",table:"tunel_status",filter:"id=eq.1"},
+    payload=>applyRemote(payload.new)
+  ).subscribe();
+  setInterval(async()=>{
+    if(isController)return;
+    const {data}=await supabase.from("tunel_status").select("*").eq("id",1).single();
+    if(data)applyRemote(data);
+  },5000);
+}
+function parseLine(s){if(!s)return;log("Arduino: "+s);let m=s.match(/RPM\s*:\s*(\d+(?:[.,]\d+)?)/i);if(m){rpm=parseFloat(m[1].replace(",","."));calc();publishStatus()}}
 async function readLoop(){let dec=new TextDecoder(),buf="";reading=true;while(port&&port.readable&&reading){reader=port.readable.getReader();try{while(reading){let r=await reader.read();if(r.done)break;if(r.value){buf+=dec.decode(r.value,{stream:true});let a=buf.split(/\r?\n/);buf=a.pop();a.forEach(x=>parseLine(x.trim()))}}}catch(e){log("Erro: "+e.message)}finally{try{reader.releaseLock()}catch(e){}reader=null}}}
-async function connect(){if(!("serial" in navigator)){alert("Use Google Chrome ou Microsoft Edge atualizado em um computador.");return}try{port=await navigator.serial.requestPort();await port.open({baudRate:9600});setConnected(true);log("Conectado em 9600 baud.");readLoop()}catch(e){log("Falha: "+e.message);alert("Não foi possível conectar. Feche o Monitor Serial da IDE Arduino e tente novamente.")}}
-async function disconnect(){reading=false;try{if(reader)await reader.cancel()}catch(e){}try{if(port)await port.close()}catch(e){}port=null;rpm=0;calc();setConnected(false);log("Desconectado.")}
-async function send(v){if(!port||!port.writable){alert("Conecte o Arduino primeiro.");return}v=Math.max(0,Math.min(100,parseInt(v)||0));updatePWM(v);let w=port.writable.getWriter();try{await w.write(new TextEncoder().encode(v+"\n"));log("PWM enviado: "+v+"%")}finally{w.releaseLock()}}
+async function connect(){
+  if(!("serial" in navigator)){alert("Neste dispositivo o painel funciona em modo de acompanhamento. Para controlar o fan, use Chrome ou Edge em um computador conectado ao Arduino por USB.");return}
+  try{
+    port=await navigator.serial.requestPort();
+    await port.open({baudRate:9600});
+    isController=true;
+    setConnected(true);
+    log("Conectado em 9600 baud.");
+    await publishStatus(true);
+    heartbeatTimer=setInterval(()=>publishStatus(true),3000);
+    readLoop();
+  }catch(e){log("Falha: "+e.message);alert("Não foi possível conectar. Feche o Monitor Serial da IDE Arduino e tente novamente.")}
+}
+async function disconnect(){
+  reading=false;
+  if(heartbeatTimer){clearInterval(heartbeatTimer);heartbeatTimer=null;}
+  if(isController){
+    const {q,v,re}=valuesFromRpm();
+    await supabase.from("tunel_status").update({rpm:Math.round(rpm),pwm:currentPwm,velocidade:v,vazao:q,reynolds:re,online:false,updated_at:new Date().toISOString()}).eq("id",1);
+  }
+  try{if(reader)await reader.cancel()}catch(e){}
+  try{if(port)await port.close()}catch(e){}
+  port=null;isController=false;rpm=0;calc();setConnected(false);log("Desconectado.");
+}
+async function send(v){if(!port||!port.writable){alert("Conecte o Arduino primeiro.");return}v=Math.max(0,Math.min(100,parseInt(v)||0));updatePWM(v);let w=port.writable.getWriter();try{await w.write(new TextEncoder().encode(v+"\n"));log("PWM enviado: "+v+"%");await publishStatus(true)}finally{w.releaseLock()}}
 $("connect").onclick=connect;$("disconnect").onclick=disconnect;$("pwm").oninput=e=>updatePWM(e.target.value);$("send").onclick=()=>send($("pwm").value);quick.forEach(b=>b.onclick=()=>send(b.dataset.p));
 $("toggleRe").onclick=()=>{showRe=!showRe;$("toggleRe").textContent=showRe?"Ocultar resultado":"Mostrar resultado";calc()};
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.tab).classList.add("active")});
-navigator.serial?.addEventListener("disconnect",()=>{port=null;rpm=0;calc();setConnected(false);log("Arduino removido.")});
-updatePWM(50);calc();setConnected(false);
+navigator.serial?.addEventListener("disconnect",async()=>{port=null;if(heartbeatTimer){clearInterval(heartbeatTimer);heartbeatTimer=null;}isController=false;rpm=0;calc();setConnected(false);log("Arduino removido.")});
+if(!("serial" in navigator)){
+  $("connect").disabled=true;
+  $("connect").textContent="Modo acompanhamento";
+  $("disconnect").style.display="none";
+}
+updatePWM(50);calc();setConnected(false);startCloud();
 </script>
 </main></body></html>
