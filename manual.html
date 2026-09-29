@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#07111f"><title>Manual do Projeto — Túnel de Vento</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1a2b;--line:#203a56;--text:#f4f7fb;--muted:#9fb3c8;--blue:#4ca6ff}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 15% 0%,rgba(76,166,255,.15),transparent 28%),var(--bg);color:var(--text)}
+main{max-width:980px;margin:auto;padding:24px}h1{margin:0;font-size:clamp(28px,4vw,44px)}p,li{color:var(--muted);line-height:1.6}.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:20px;padding:20px;margin:14px 0}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.nav a{color:#c9d8e7;text-decoration:none;background:#102238;border:1px solid var(--line);border-radius:11px;padding:9px 13px;font-weight:700}.nav a.active{color:#fff;background:#1d3a5a;border-color:#416f9e}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;margin:14px 0}.n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#1e3d5d;color:#a9d7ff;font-weight:800}.formula{background:#06101a;border:1px solid #1d3854;border-radius:12px;padding:12px;font-family:Consolas,monospace;color:#d8ebff;margin:8px 0;white-space:pre-line}.tag{display:inline-block;padding:5px 9px;border-radius:999px;background:#13263d;border:1px solid #274666;color:#bcd5ee;font-size:12px;font-weight:700}.note{border-left:3px solid var(--blue);padding-left:12px}
+</style></head><body><main>
+<h1>Manual do Projeto</h1><p>Este manual será ampliado junto com o desenvolvimento do túnel de vento. A ideia é que um aluno que nunca utilizou o equipamento consiga entender o objetivo, conectar o sistema e realizar os primeiros ensaios.</p>
+<nav class="nav"><a href="index.html">Painel</a><a class="active" href="manual.html">Manual do projeto</a><a href="creditos.html">Créditos</a></nav>
+<section class="card"><span class="tag">1. Visão geral</span><h2>O que é este equipamento?</h2><p>É um túnel de vento didático com um perfil NACA 0012 na seção de testes. O fan gera o escoamento, o Arduino controla sua rotação e mede RPM, e a aplicação estima vazão, velocidade do ar e número de Reynolds.</p><p class="note"><b>Importante:</b> RPM é medido diretamente. Vazão e velocidade são estimadas pelo modelo adotado e podem ser calibradas futuramente com um anemômetro.</p></section>
+<section class="card"><span class="tag">2. Antes de começar</span><h2>Conexão básica</h2>
+<div class="step"><div class="n">1</div><div><b>Ligue a alimentação do fan.</b><p>O fan utiliza alimentação externa de 12 V. Não alimente o fan pelo pino 5 V do Arduino.</p></div></div>
+<div class="step"><div class="n">2</div><div><b>Conecte o Arduino ao computador por USB.</b><p>O computador precisa estar fisicamente conectado ao Arduino para que o navegador consiga controlar o equipamento.</p></div></div>
+<div class="step"><div class="n">3</div><div><b>Feche o Monitor Serial da IDE Arduino.</b><p>Somente um programa pode usar a porta serial por vez.</p></div></div>
+<div class="step"><div class="n">4</div><div><b>Abra o Painel em Chrome ou Edge.</b><p>Clique em “Conectar Arduino” e selecione a porta correspondente ao equipamento.</p></div></div>
+</section>
+<section class="card"><span class="tag">3. Utilização</span><h2>Primeiro ensaio</h2><p>Comece com uma potência moderada do fan. Observe o RPM e espere alguns segundos para estabilização. Depois registre RPM e velocidade estimada. Uma sequência simples é testar 25%, 50%, 75% e 100%, comparar os valores e calcular Reynolds.</p></section>
+<section class="card"><span class="tag">4. Cálculos</span><h2>Como o sistema chega ao Reynolds?</h2><p>A vazão é estimada a partir da rotação do fan:</p><div class="formula">Q = Qref × (RPM / RPMref)</div><p>A velocidade média é:</p><div class="formula">V = Q / A</div><p>O número de Reynolds é:</p><div class="formula">Re = (ρ × V × c) / μ</div><p>Onde <b>ρ</b> é a densidade do ar, <b>V</b> a velocidade, <b>c</b> a corda da asa e <b>μ</b> a viscosidade dinâmica.</p></section>
+<section class="card"><span class="tag">5. Dados atuais</span><h2>Configuração utilizada</h2><div class="formula">Perfil: NACA 0012
+Seção interna: 91 × 91 mm
+Área A: 0,008281 m²
+Corda c: 0,050 m
+RPMref: 2050 RPM
+Qref: 50 CFM
+ρ: 1,204 kg/m³
+μ: 1,81×10⁻⁵ Pa·s</div></section>
+<section class="card"><span class="tag">Em desenvolvimento</span><h2>Próximas partes do manual</h2><p>Podemos acrescentar fotos da montagem, esquema elétrico, condicionamento de fluxo, procedimento com fumaça, interpretação da separação do escoamento, solução de problemas e um roteiro de aula completo.</p></section>
+</main></body></html>
