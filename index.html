@@ -4,83 +4,151 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07111f">
-<title>Túnel de Vento Didático</title>
-<style>
-:root{--bg:#07111f;--panel:#0d1a2b;--panel2:#102238;--line:#203a56;--text:#f4f7fb;--muted:#9fb3c8;--blue:#4ca6ff;--cyan:#62d7e8;--green:#4ed39b}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:radial-gradient(circle at 15% 0%,rgba(76,166,255,.15),transparent 28%),var(--bg);color:var(--text)}
-main{max-width:1180px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:18px}
-h1{margin:0;font-size:clamp(28px,4vw,44px);letter-spacing:-.03em}header p{margin:6px 0 0;color:var(--muted)}
-.nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.nav a{color:#c9d8e7;text-decoration:none;background:#102238;border:1px solid var(--line);border-radius:11px;padding:9px 13px;font-weight:700}.nav a.active{color:#fff;background:#1d3a5a;border-color:#416f9e}
-.status{padding:10px 14px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-weight:700}.status.on{color:#b9f6d8}
-.layout{display:grid;grid-template-columns:1.12fr .88fr;gap:18px}.card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:20px;padding:20px}
-.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}button{font:inherit;font-weight:700;color:var(--text);background:#172a42;border:1px solid #2e4c6d;border-radius:11px;padding:10px 14px;cursor:pointer}button.primary{background:linear-gradient(135deg,#4ca6ff,#277fe0);border:0}button:disabled{opacity:.45;cursor:not-allowed}
-.control{display:grid;grid-template-columns:190px 1fr;gap:24px;align-items:center;margin-top:22px}.gauge{--p:50;width:190px;height:190px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,#0d1a2b 58%,transparent 59%),conic-gradient(var(--blue) calc(var(--p)*1%),#20364e 0)}
-.gauge b{font-size:42px;display:block;text-align:center}.gauge span{font-size:13px;color:var(--muted)}input[type=range]{width:100%;accent-color:var(--blue)}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-.metric{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:15px}.metric small{display:block;color:var(--muted);margin-bottom:6px}.metric strong{font-size:31px}.unit{color:var(--muted);font-size:13px}
-.remoteGate{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:14px;padding:18px;border-radius:16px;border:2px solid #7a3131;background:rgba(255,107,107,.07)}.remoteGate.allowed{border-color:#2e775b;background:rgba(78,211,155,.10)}.remoteGate .remoteTitle{font-weight:900;font-size:17px}.remoteGate .remoteState{font-size:13px;color:#e7b6b6;margin-top:5px;line-height:1.4}.remoteGate.allowed .remoteState{color:#aee9cf}.masterBadge{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#ffb6b6;margin-bottom:5px}.remoteGate.allowed .masterBadge{color:#9de4c5}#toggleRemote{min-width:210px;font-size:14px;padding:12px 16px;background:#632828;border-color:#a84a4a} .remoteGate.allowed #toggleRemote{background:#18553d;border-color:#2e775b}.rebox{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:12px;padding:17px;border-radius:14px;border:1px solid #285078;background:rgba(76,166,255,.08)}.rebox strong{font-size:36px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{background:#1d3a5a;border-color:#416f9e}.panel{display:none}.panel.active{display:block}
-.infoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.info{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px}.info b{color:var(--cyan)}.muted{color:var(--muted);line-height:1.45}
-.formula{background:#06101a;border:1px solid #1d3854;border-radius:12px;padding:12px;font-family:Consolas,monospace;color:#d8ebff;margin:8px 0;white-space:pre-line}
-.step{display:flex;gap:10px;margin:14px 0}.num{min-width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#1e3d5d;color:#a9d7ff;font-weight:800}
-#log{height:120px;overflow:auto;background:#030a12;border-radius:10px;padding:8px;font:12px Consolas,monospace;color:#b7daf7;white-space:pre-wrap}
-footer{color:var(--muted);text-align:center;font-size:12px;padding:18px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.control{grid-template-columns:1fr}.gauge{margin:auto}}
-@media(max-width:620px){.metrics,.infoGrid{grid-template-columns:1fr}.quick{grid-template-columns:1fr 1fr}main{padding:14px}}
-</style>
+<title>Painel — Túnel de Vento Didático</title>
+<link rel="stylesheet" href="styles.css">
 </head>
-<body><main>
-<header><div><h1>Túnel de Vento Didático</h1><p>Controle do fan, leitura de RPM e compreensão do número de Reynolds</p></div><div id="status" class="status">● Arduino desconectado</div></header>
-<nav class="nav"><a class="active" href="index.html">Painel</a><a href="manual.html">Manual do projeto</a><a href="creditos.html">Créditos</a></nav>
+<body>
+<main>
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">IFSC Câmpus Xanxerê • Projeto didático</div>
+      <h1>Túnel de Vento Didático</h1>
+      <p>Controle do fan, leitura de RPM e estudo guiado do número de Reynolds.</p>
+    </div>
+    <div id="status" class="status">● Túnel offline</div>
+  </header>
 
-<div class="layout">
-<section class="card">
-<div class="row"><button id="connect" class="primary">Conectar Arduino</button><button id="disconnect" disabled>Desconectar</button><span class="muted">Use Chrome ou Edge. Feche o Monitor Serial.</span></div>
-<div id="remoteGate" class="remoteGate"><div><div class="masterBadge">Botão mestre — somente no PC</div><div class="remoteTitle">Permissão para alterar a velocidade pelo celular</div><div id="remoteState" class="remoteState">BLOQUEADO — celulares podem apenas acompanhar os dados.</div></div><button id="toggleRemote" style="display:none" disabled>LIBERAR NO CELULAR</button></div>
-<div class="control">
-<div id="gauge" class="gauge" style="--p:50"><div><b id="pwmBig">50%</b><span>potência do fan</span></div></div>
-<div><h2 style="margin-top:0">Controle do fan</h2><div class="row"><input id="pwm" type="range" min="0" max="100" value="50"><button id="send" disabled>Aplicar</button></div>
-<div class="quick"><button data-p="25" disabled>25%</button><button data-p="50" disabled>50%</button><button data-p="75" disabled>75%</button><button data-p="100" disabled>100%</button></div></div>
-</div>
-<div class="metrics">
-<div class="metric"><small>Rotação medida</small><strong id="rpm">0</strong><div class="unit">RPM</div></div>
-<div class="metric"><small>Velocidade estimada</small><strong id="vel">0,00</strong><div class="unit">m/s</div></div>
-<div class="metric"><small>Vazão estimada</small><strong id="flow">0,0000</strong><div class="unit">m³/s</div></div>
-</div>
-<div class="rebox"><div><div class="muted">Número de Reynolds</div><strong id="re">????</strong></div><button id="toggleRe">Mostrar resultado</button></div>
-</section>
+  <nav class="nav">
+    <a class="active" href="index.html">Painel ao vivo</a>
+    <a href="aula.html">Modo Aula</a>
+    <a href="manual.html">Manual</a>
+    <a href="creditos.html">Créditos</a>
+  </nav>
 
-<aside class="card">
-<div class="tabs"><button class="active" data-tab="dados">Entenda os dados</button><button data-tab="reynolds">Como calcular</button><button data-tab="projeto">Dados do projeto</button></div>
+  <div class="layout">
+    <section class="card">
+      <div class="sectionTitle">
+        <div>
+          <div class="eyebrow">Operação do equipamento</div>
+          <h2>Painel de controle</h2>
+        </div>
+        <a class="button" href="aula.html">Ir para o Modo Aula →</a>
+      </div>
 
-<div id="dados" class="panel active"><h2>O que significa cada coisa?</h2><div class="infoGrid">
-<div class="info"><b>RPM</b><div class="muted">Rotações por minuto do fan. É medido pelo sinal TACH.</div></div>
-<div class="info"><b>Q — Vazão</b><div class="muted">Quantidade de ar que atravessa o túnel por segundo. Aqui é estimada a partir do RPM.</div></div>
-<div class="info"><b>V — Velocidade</b><div class="muted">Velocidade média estimada do ar na seção de teste.</div></div>
-<div class="info"><b>A — Área</b><div class="muted">Área interna da seção do túnel: 0,091 × 0,091 m.</div></div>
-<div class="info"><b>c — Corda da asa</b><div class="muted">Distância do bordo de ataque ao bordo de fuga. Neste projeto: 50 mm = 0,050 m.</div></div>
-<div class="info"><b>ρ — Densidade do ar</b><div class="muted">Massa de ar por volume. Valor adotado: 1,204 kg/m³.</div></div>
-<div class="info"><b>μ — Viscosidade</b><div class="muted">Resistência interna do ar ao escoamento. Valor adotado: 1,81×10⁻⁵ Pa·s.</div></div>
-<div class="info"><b>Re — Reynolds</b><div class="muted">Número adimensional que compara os efeitos de inércia e viscosidade.</div></div>
-</div></div>
+      <div class="row">
+        <button id="connect" class="primary">Conectar Arduino</button>
+        <button id="disconnect" disabled>Desconectar</button>
+        <span class="muted small">No PC: use Chrome ou Edge e feche o Monitor Serial da IDE.</span>
+      </div>
 
-<div id="reynolds" class="panel"><h2>Como chegamos ao Reynolds?</h2>
-<div class="step"><div class="num">1</div><div><b>Medimos o RPM</b><div class="muted">O Arduino conta os pulsos do tacômetro do fan.</div></div></div>
-<div class="step"><div class="num">2</div><div><b>Estimamos a vazão Q</b><div class="formula">Q = Qref × (RPM / RPMref)</div></div></div>
-<div class="step"><div class="num">3</div><div><b>Calculamos a velocidade V</b><div class="formula">V = Q / A</div><div class="muted">A = 0,008281 m².</div></div></div>
-<div class="step"><div class="num">4</div><div><b>Calculamos Reynolds</b><div class="formula">Re = (ρ × V × c) / μ</div></div></div>
-<p class="muted">Para calcular Reynolds usamos densidade do ar ρ, velocidade V, corda da asa c e viscosidade dinâmica μ.</p></div>
+      <div id="remoteGate" class="remoteGate">
+        <div>
+          <div class="masterBadge">Botão mestre — somente no PC</div>
+          <div class="remoteTitle">Permissão para alterar a velocidade pelo celular</div>
+          <div id="remoteState" class="remoteState">BLOQUEADO — celulares podem apenas acompanhar os dados.</div>
+        </div>
+        <button id="toggleRemote" style="display:none" disabled>LIBERAR NO CELULAR</button>
+      </div>
 
-<div id="projeto" class="panel"><h2>Valores usados no sistema</h2><div class="formula">RPMref = 2050 RPM
-Qref = 50 CFM
-A = 0,008281 m²
-c = 0,050 m
-ρ = 1,204 kg/m³
-μ = 1,81×10⁻⁵ Pa·s</div>
-<p class="muted"><b>Importante:</b> RPM é medido. Vazão e velocidade são estimadas por um modelo didático. Uma calibração com anemômetro pode melhorar a precisão.</p>
-<details><summary>Diagnóstico da comunicação</summary><div id="log"></div></details></div>
-</aside></div>
-<footer>Aplicação didática — Túnel de Vento NACA 0012</footer>
+      <div class="control">
+        <div id="gauge" class="gauge" style="--p:50">
+          <div>
+            <b id="pwmBig">50%</b>
+            <span>potência do fan</span>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow">Comando</div>
+          <h2>Velocidade do fan</h2>
+          <p class="muted">Ajuste a potência e observe como o RPM medido responde.</p>
+          <div class="row">
+            <input id="pwm" type="range" min="0" max="100" value="50">
+            <button id="send" disabled>Aplicar</button>
+          </div>
+          <div class="quick">
+            <button data-p="25" disabled>25%</button>
+            <button data-p="50" disabled>50%</button>
+            <button data-p="75" disabled>75%</button>
+            <button data-p="100" disabled>100%</button>
+          </div>
+        </div>
+      </div>
 
+      <div class="metrics">
+        <div class="metric">
+          <small>RPM • valor medido</small>
+          <strong id="rpm">0</strong>
+          <div class="unit">rotações por minuto</div>
+        </div>
+        <div class="metric">
+          <small>V • velocidade estimada</small>
+          <strong id="vel">0,00</strong>
+          <div class="unit">m/s</div>
+        </div>
+        <div class="metric">
+          <small>Q • vazão estimada</small>
+          <strong id="flow">0,0000</strong>
+          <div class="unit">m³/s</div>
+        </div>
+      </div>
+
+      <div class="rebox">
+        <div>
+          <div class="muted">Re • número de Reynolds</div>
+          <strong id="re">????</strong>
+        </div>
+        <button id="toggleRe">Mostrar resultado</button>
+      </div>
+    </section>
+
+    <aside class="stack">
+      <section class="card">
+        <div class="eyebrow">Leia o experimento</div>
+        <h2>O caminho dos dados</h2>
+        <p class="muted">O sistema foi organizado para deixar claro o que é medido, o que é estimado e o que é calculado.</p>
+        <div class="flow">
+          <span class="node">RPM medido</span><span class="arrow">→</span>
+          <span class="node">Q estimada</span><span class="arrow">→</span>
+          <span class="node">V estimada</span><span class="arrow">→</span>
+          <span class="node">Re calculado</span>
+        </div>
+        <div class="callout">
+          <b>Regra principal:</b> o Arduino mede RPM. Vazão e velocidade são estimativas do modelo didático. Reynolds é calculado a partir dessas grandezas.
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="eyebrow">Grandezas do projeto</div>
+        <h2>O que significa cada símbolo?</h2>
+        <div class="infoGrid">
+          <div class="info"><b>RPM</b><div class="muted small">Rotação real do fan, obtida pelo sinal TACH.</div></div>
+          <div class="info"><b>Q</b><div class="muted small">Vazão volumétrica estimada do ar.</div></div>
+          <div class="info"><b>V</b><div class="muted small">Velocidade média estimada na seção de teste.</div></div>
+          <div class="info"><b>A</b><div class="muted small">Área interna da seção: 0,008281 m².</div></div>
+          <div class="info"><b>c</b><div class="muted small">Corda da asa: 0,050 m.</div></div>
+          <div class="info"><b>Re</b><div class="muted small">Número adimensional que relaciona inércia e viscosidade.</div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="eyebrow">Para aprender, não apenas observar</div>
+        <h2>Modo Aula</h2>
+        <p class="muted">No Modo Aula, o aluno coleta o RPM do ensaio e percorre, passo a passo, os cálculos de vazão, velocidade e Reynolds sem receber a resposta antes da hora.</p>
+        <a class="button primary" href="aula.html">Iniciar roteiro guiado</a>
+      </section>
+
+      <section class="card">
+        <details>
+          <summary><b>Diagnóstico da comunicação</b></summary>
+          <p class="muted small">Use esta área apenas para verificar a comunicação com o Arduino.</p>
+          <div id="log"></div>
+        </details>
+      </section>
+    </aside>
+  </div>
+
+  <footer>Túnel de Vento Didático • NACA 0012 • IFSC Câmpus Xanxerê</footer>
+</main>
 <script type="module" src="app.js"></script>
-</main></body></html>
+</body>
+</html>
