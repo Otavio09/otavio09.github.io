@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07111f">
+<title>Explicação do Projeto — Túnel de Vento Didático</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main>
+  <header class="topbar">
+    <div class="brand">
+      <div class="eyebrow">IFSC Câmpus Xanxerê • Visão geral</div>
+      <h1>Explicação do Projeto</h1>
+      <p>Entenda como o túnel funciona, como os dados são coletados e como o controle pode ser feito pelo computador ou celular.</p>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="index.html">Painel ao vivo</a>
+    <a href="aula.html">Modo Aula</a>
+    <a class="active" href="explicacao.html">Explicação do Projeto</a>
+    <a href="manual.html">Manual</a>
+    <a href="creditos.html">Créditos</a>
+  </nav>
+
+  <section class="card">
+    <div class="eyebrow">1. Visão geral</div>
+    <h2>Do escoamento ao número de Reynolds</h2>
+    <p class="muted">O túnel de vento foi desenvolvido para transformar um fenômeno visual em uma sequência de dados que o aluno consegue acompanhar e calcular. O fan movimenta o ar, o Arduino mede a rotação e o sistema utiliza esse valor para construir o caminho didático até o número de Reynolds.</p>
+    <div class="flow">
+      <span class="node">Fan</span><span class="arrow">→</span>
+      <span class="node">RPM medido</span><span class="arrow">→</span>
+      <span class="node">Q estimada</span><span class="arrow">→</span>
+      <span class="node">V estimada</span><span class="arrow">→</span>
+      <span class="node">Re calculado</span>
+    </div>
+    <div class="callout">
+      <b>Importante:</b> o RPM é medido diretamente pelo sistema. Vazão e velocidade são estimadas pelo modelo didático adotado, e Reynolds é calculado a partir dessas grandezas.
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">2. Demonstração em vídeo</div>
+    <h2>Veja o sistema funcionando</h2>
+    <p class="muted">Os dois vídeos abaixo mostram os dois lados do experimento: a operação no computador conectado ao Arduino e o acompanhamento/controle pelo celular quando o operador libera essa permissão.</p>
+
+    <div class="videoGrid">
+      <article class="videoCard">
+        <div class="videoFrame">
+          <video controls preload="metadata" poster="https://pqsedxfgtauxjclityjt.supabase.co/storage/v1/object/public/project-media/poster_pc.jpg">
+            <source src="https://pqsedxfgtauxjclityjt.supabase.co/storage/v1/object/public/project-media/operacao_computador.mp4" type="video/mp4">
+            Seu navegador não conseguiu reproduzir este vídeo.
+          </video>
+        </div>
+        <div class="videoMeta"><span class="tag">Computador</span><span class="tag">Arduino</span><span class="tag">Painel ao vivo</span></div>
+        <h3 style="margin-top:10px">Operação pelo computador</h3>
+        <p class="muted">O computador é o controlador principal. É nele que o Arduino é conectado por USB, a potência do fan é ajustada e o RPM medido é recebido em tempo real.</p>
+      </article>
+
+      <article class="videoCard">
+        <div class="videoFrame">
+          <video controls preload="metadata" poster="https://pqsedxfgtauxjclityjt.supabase.co/storage/v1/object/public/project-media/poster_mobile.jpg">
+            <source src="https://pqsedxfgtauxjclityjt.supabase.co/storage/v1/object/public/project-media/controle_celular.mp4" type="video/mp4">
+            Seu navegador não conseguiu reproduzir este vídeo.
+          </video>
+        </div>
+        <div class="videoMeta"><span class="tag">Celular</span><span class="tag">Tempo real</span><span class="tag">Controle autorizado</span></div>
+        <h3 style="margin-top:10px">Acompanhamento e controle pelo celular</h3>
+        <p class="muted">O celular acompanha os dados pela internet. Quando o botão mestre no computador libera o controle remoto, o celular também pode solicitar uma nova potência para o fan.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">3. Como o comando percorre o sistema</div>
+    <h2>Quem controla o quê?</h2>
+    <div class="stack">
+      <div class="explainStep">
+        <div class="stepNo">1</div>
+        <div><h3>O computador se conecta ao Arduino</h3><div class="muted">A conexão física USB fica no computador. Por isso, ele é sempre o controlador principal do equipamento.</div></div>
+      </div>
+      <div class="explainStep">
+        <div class="stepNo">2</div>
+        <div><h3>O Arduino controla o fan e mede o RPM</h3><div class="muted">O comando PWM altera a rotação do fan. O sinal TACH retorna a rotação medida para o sistema.</div></div>
+      </div>
+      <div class="explainStep">
+        <div class="stepNo">3</div>
+        <div><h3>Os dados são publicados em tempo real</h3><div class="muted">O computador envia o estado do experimento para a nuvem, permitindo que outros dispositivos acompanhem o ensaio.</div></div>
+      </div>
+      <div class="explainStep">
+        <div class="stepNo">4</div>
+        <div><h3>O celular pode receber permissão para alterar o fan</h3><div class="muted">O botão mestre existe no computador. Se estiver bloqueado, o celular apenas visualiza. Se estiver liberado, pode alterar somente a potência do fan.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">4. O experimento aerodinâmico</div>
+    <h2>O que o aluno observa no túnel?</h2>
+    <p class="muted">Na seção de teste está um perfil NACA 0012. A fumaça permite visualizar o caminho do ar e perceber mudanças no escoamento conforme variamos a condição do ensaio.</p>
+    <div class="twoCol">
+      <div class="definition">
+        <div class="symbol">NACA 0012</div>
+        <div class="name">Perfil utilizado</div>
+        <div class="muted">Corda de 50 mm e envergadura de 88 mm.</div>
+      </div>
+      <div class="definition">
+        <div class="symbol">91 × 91 mm</div>
+        <div class="name">Seção de teste</div>
+        <div class="muted">Área interna utilizada nos cálculos: 0,008281 m².</div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:14px">Ao variar a rotação do fan, mudamos a velocidade estimada do ar e, consequentemente, o número de Reynolds. Ao variar o ângulo da asa, o aluno pode observar mudanças na aderência do escoamento e o aparecimento de separação.</p>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">5. Próximo passo</div>
+    <h2>Agora transforme observação em cálculo</h2>
+    <p class="muted">Depois de entender o funcionamento do equipamento, o Modo Aula conduz o aluno por uma sequência em que ele coleta o RPM e calcula vazão, velocidade e número de Reynolds sem receber a resposta antes da hora.</p>
+    <div class="row">
+      <a class="button" href="index.html">Abrir Painel ao vivo</a>
+      <a class="button primary" href="aula.html">Iniciar Modo Aula →</a>
+    </div>
+  </section>
+
+  <footer>Túnel de Vento Didático • Explicação do Projeto • IFSC Câmpus Xanxerê</footer>
+</main>
+</body>
+</html>
