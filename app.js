@@ -5,12 +5,12 @@ let port=null,reader=null,reading=false,rpm=0,showRe=false,pc=false,pwm=50,remot
 const $=x=>document.getElementById(x), quick=[...document.querySelectorAll("[data-p]")];
 const fmt=(n,d)=>Number(n).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d});
 function log(t){let e=$("log");e.textContent+=t+"\n";e.scrollTop=e.scrollHeight}
-function setP(v){v=Math.max(0,Math.min(100,parseInt(v)||0));pwm=v;$("pwm").value=v;$("pwmBig").textContent=v+"%";$("gauge").style.setProperty("--p",v)}
+function setP(v){v=Math.max(0,Math.min(100,parseInt(v)||0));pwm=v;$("pwm").value=v;$("pwmManual").value=v;$("pwmBig").textContent=v+"%";$("gauge").style.setProperty("--p",v)}
 function vals(){let q=rpm>0?(Q*C)*(rpm/R):0,v=q/A,re=D*v*L/M;return{q,v,re}}
 function draw(){let{q,v,re}=vals();$("rpm").textContent=Math.round(rpm).toLocaleString("pt-BR");$("flow").textContent=fmt(q,4);$("vel").textContent=fmt(v,2);$("re").textContent=showRe?Math.round(re).toLocaleString("pt-BR"):"????"}
 function ui(){
  const rc=!pc&&online&&remote,can=pc||rc;
- $("connect").disabled=pc||!("serial"in navigator);$("disconnect").disabled=!pc;$("send").disabled=!can;$("pwm").disabled=!can;quick.forEach(b=>b.disabled=!can);
+ $("connect").disabled=pc||!("serial"in navigator);$("disconnect").disabled=!pc;$("send").disabled=!can;$("pwm").disabled=!can;$("pwmManual").disabled=!can;quick.forEach(b=>b.disabled=!can);
  $("toggleRemote").style.display=pc?"inline-block":"none";$("toggleRemote").disabled=!pc;$("toggleRemote").textContent=remote?"BLOQUEAR NO CELULAR":"LIBERAR NO CELULAR";
  $("remoteGate").classList.toggle("allowed",remote&&online);
  $("remoteState").textContent=pc?(remote?"LIBERADO — o botão mestre está ativo e celulares podem alterar somente a velocidade do fan.":"BLOQUEADO — o botão mestre impede qualquer alteração pelo celular; celulares apenas acompanham os dados."):(online&&remote?"CONTROLE LIBERADO PELO PC — você pode alterar a velocidade do fan.":online?"MODO VISUALIZAÇÃO — o PC bloqueou alterações pelo celular.":"Túnel offline — aguardando o computador conectado ao Arduino.");
@@ -62,7 +62,7 @@ async function request(v){
 async function toggleRemote(){
  if(!pc)return;let next=!remote;remote=next;let{error}=await S.from("tunel_status").update({remote_control:next,requested_pwm:pwm}).eq("id",1);if(error){remote=!next;log("Nuvem: "+error.message)}ui()
 }
-$("connect").onclick=connect;$("disconnect").onclick=disconnect;$("toggleRemote").onclick=toggleRemote;$("pwm").oninput=e=>{if(pc||(online&&remote))setP(e.target.value)};$("send").onclick=()=>request($("pwm").value);quick.forEach(b=>b.onclick=()=>request(b.dataset.p));
+$("connect").onclick=connect;$("disconnect").onclick=disconnect;$("toggleRemote").onclick=toggleRemote;$("pwm").oninput=e=>{if(pc||(online&&remote))setP(e.target.value)};$("pwmManual").oninput=e=>{const raw=e.target.value.trim().replace(",",".");const n=Number(raw);if(raw!==""&&Number.isFinite(n)&&n>=0&&n<=100)setP(Math.round(n))};$("send").onclick=()=>request($("pwmManual").value.replace(",","."));quick.forEach(b=>b.onclick=()=>request(b.dataset.p));
 $("toggleRe").onclick=()=>{showRe=!showRe;$("toggleRe").textContent=showRe?"Ocultar resultado":"Mostrar resultado";if(pc)draw();else S.from("tunel_status").select("*").eq("id",1).single().then(({data})=>data&&cloud(data))};
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));b.classList.add("active");$(b.dataset.tab).classList.add("active")});
 navigator.serial?.addEventListener("disconnect",async()=>{port=null;if(hb){clearInterval(hb);hb=null}if(pc)await S.from("tunel_status").update({online:false,remote_control:false,requested_pwm:pwm,updated_at:new Date().toISOString()}).eq("id",1);pc=false;online=false;remote=false;ui();log("Arduino removido.")});
