@@ -49,7 +49,7 @@ function showStep(n){
     el.classList.toggle("done",s<currentStep);
   });
   $("progressFill").style.width=((currentStep)/5*100)+"%";
-  if(currentStep===2)$("qRpmEcho").textContent=rpmChosen?Math.round(rpmChosen).toLocaleString("pt-BR"):"—";
+  if(currentStep===2)$("qRpmEcho").textContent=rpmChosen?Number(rpmChosen).toLocaleString("pt-BR",{maximumFractionDigits:6}):"—";
   if(currentStep===3)$("vQEcho").textContent=qExpected?fmt(qExpected,5):"—";
   if(currentStep===4)$("reVEcho").textContent=vExpected?fmt(vExpected,2):"—";
   if(currentStep===5)fillSummary();
@@ -136,7 +136,7 @@ function checkRe(){
 function fillSummary(){
   const group=$("groupName").value.trim()||"Não informado";
   $("sumGroup").textContent=group;
-  $("sumRpm").textContent=rpmChosen?Math.round(rpmChosen).toLocaleString("pt-BR")+" RPM":"—";
+  $("sumRpm").textContent=rpmChosen?Number(rpmChosen).toLocaleString("pt-BR",{maximumFractionDigits:6})+" RPM":"—";
   $("sumQ").textContent=qExpected?fmt(qExpected,5)+" m³/s":"—";
   $("sumV").textContent=vExpected?fmt(vExpected,2)+" m/s":"—";
   $("sumRe").textContent=reExpected?Math.round(reExpected).toLocaleString("pt-BR"):"—";
