@@ -63,7 +63,7 @@
           <h2>Velocidade do fan</h2>
           <p class="muted">Ajuste a potência e observe como o RPM medido responde.</p>
           <div class="row">
-            <input id="pwm" type="range" min="0" max="100" value="50">
+            <input id="pwm" type="range" min="0" max="100" value="50" step="1" aria-label="Potência do ventilador"><label for="pwmManual" class="muted small">Potência manual (%)</label><input id="pwmManual" type="text" inputmode="decimal" value="50" style="width:95px" aria-label="Digite a potência de 0 a 100">
             <button id="send" disabled>Aplicar</button>
           </div>
           <div class="quick">
